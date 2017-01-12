@@ -22,7 +22,7 @@ def generate_message(birthday_people, add_date):
                 result += "({}) \n".format(format_date(man['birth_date']))
         return result
     except:
-        return 'Произошла ошибка. Зайди на Портал и посмотри.'
+        return 'Произошла ошибка. Зайди на Портал и посмотри portal.light-it.net.'
 
 
 def start_handler(bot, update):
