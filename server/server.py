@@ -6,10 +6,10 @@ from signal import signal, SIGINT, SIGTERM, SIGABRT
 import server.handlers as handlers
 import conf
 
-from server.portal_work import get_todays_birthdays
+from server.portal_work import Birthdays
 from server.handlers import generate_message
 from models import Subscriber
-
+import msg
 
 
 HANDLER_MAPPING = {
@@ -22,9 +22,8 @@ HANDLER_MAPPING = {
 
 
 def help_handler(bot, update):
-    result_message = 'Доступные команды: '
-    for command in HANDLER_MAPPING.keys():
-        result_message += "/" + command + " "
+    commands_str = ', \n'.join(['/{}'.format(command) for command in sorted(HANDLER_MAPPING.keys())])
+    result_message = msg.AVAILABLE_COMMANDS.format(commands_str)
     bot.sendMessage(update.message.chat_id, text=result_message)
 
 
@@ -36,29 +35,29 @@ class UpdaterNotificate(Updater):
         self.is_idle = True
 
         while self.is_idle:
-            if datetime.datetime.now().time().hour == 16 and \
-               datetime.datetime.now().time().minute == 39 and \
-               datetime.datetime.now().time().second == 0:
+            if self._it_is_time():
                 self.notificate()
             sleep(1)
 
     def notificate(self):
         subs = Subscriber.select()
-        birthday_people = get_todays_birthdays()
+        birthday_people = Birthdays().get_todays_birthdays()
         if len(birthday_people) > 0:
             for sub in subs:
                 self.bot.sendMessage(sub.channel, text=self.generate_notification(birthday_people))
 
     def generate_notification(self, birthday_people):
-        result = 'Сегодня День рождения празднуют: \n'
         try:
-            for man in birthday_people:
-                result += man['first_name'] + " "
-                result += man['last_name'] + ", \n"
-            return result[:-3]
+            birthdays = ', '.join(['{} {}'.format(man['first_name'], man['last_name']) for man in birthday_people])
+            return msg.BIRTHDAY_NOTIFICATION.format(birthdays)
         except:
-            return 'Сегодня у кого-то День рождения, но из-за ошибки я не знаю у кого. Зайди на Портал и посмотри!'
+            return msg.BIRTHDAYS_PARSE_ERROR
 
+    def _it_is_time(self):
+        now = datetime.datetime.now().time()
+        return now.hour == conf.NOTIFICATION_HOUR and \
+            now.minute == conf.NOTIFICATION_MINUTE and \
+            now.second == conf.NOTIFICATION_SECOND
 
 
 class BotServer:
