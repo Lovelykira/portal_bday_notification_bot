@@ -1,0 +1,11 @@
+/**/__pycache__
+/.env
+*.pyc
+*.swp
+.idea/
+media/*
+*local.py
+logs
+staticfiles
+*.db
+celerybeat-schedule

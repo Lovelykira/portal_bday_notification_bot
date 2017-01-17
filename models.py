@@ -1,4 +1,4 @@
-from peewee import Model, CharField
+from peewee import Model, CharField, TimeField, ForeignKeyField
 from playhouse.sqlite_ext import SqliteExtDatabase
 
 import conf
@@ -13,3 +13,8 @@ class BaseModel(Model):
 
 class Subscriber(BaseModel):
     channel = CharField()
+
+
+class SubscriberNotification(BaseModel):
+    subscriber = ForeignKeyField(Subscriber)
+    notification_name = CharField()

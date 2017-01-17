@@ -4,13 +4,18 @@ def check_database():
     """
     Create tables if doesn't exists
     """
-    from models import Subscriber
+    from models import Subscriber, SubscriberNotification
+    check_exist(Subscriber)
+    check_exist(SubscriberNotification)
+
+
+def check_exist(model):
     try:
-        Subscriber.select().count()
+        model.select().count()
     except Exception:
         from models import db
         db.connect()
-        db.create_tables([Subscriber])
+        db.create_tables([model])
 
 
 if __name__ == '__main__':

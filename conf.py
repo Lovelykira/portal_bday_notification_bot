@@ -7,11 +7,6 @@ LIGHT_IT_API_URL_DEV = 'https://www.infoportal-dev.tk'
 LOGIN_API_URL = '/api/auth/login/'
 BIRTHDAY_API_URL = '/api/week_birthdays/'
 
-NOTIFICATION_HOUR = 9
-NOTIFICATION_MINUTE = 28
-NOTIFICATION_SECOND = 0
-
-
 try:
     from local import *
 except ImportError:
